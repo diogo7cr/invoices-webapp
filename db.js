@@ -1,4 +1,4 @@
-const sql = require("mssql");
+const sql = require("mssql"); 
 require("dotenv").config();
 
 const config = {
@@ -6,11 +6,19 @@ const config = {
     password: process.env.SQL_PASSWORD,
     server: process.env.SQL_SERVER,
     database: process.env.SQL_DATABASE,
-    options: { encrypt: true }
+    options: { 
+        encrypt: true, 
+        trustServerCertificate: true // evita erros de certificado local/Azure
+    }
 };
 
+let pool;
+
 async function getPool() {
-    return sql.connect(config);
+    if (!pool) {
+        pool = await sql.connect(config);
+    }
+    return pool;
 }
 
 module.exports = { getPool, sql };
